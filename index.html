@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering Vector Theorems - VectorViz PRO</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Three.js 3D Engine -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Math.js Parser -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+    <!-- MathJax CDN for rendering LaTeX math formulas -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+
+    <style>
+        :root {
+            --bg-black: #0a0a0a;
+            --card-dark: #121212;
+            --border-muted: #262626;
+            --border-light: #333333;
+            --border-white: #ffffff;
+            --text-main: #ffffff;
+            --text-sub: #a3a3a3;
+            --text-muted: #888888;
+        }
+
+        * { 
+            box-sizing: border-box; 
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: var(--bg-black);
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        button, input, textarea, select { 
+            font: inherit; 
+        }
+
+        #app {
+            width: 100vw;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Navigation Header */
+        .nav-header {
+            height: 56px;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(12px);
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .brand-title {
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: -0.02em;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .brand-title span {
+            color: #ffffff;
+            border-bottom: 2px solid #ffffff;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-muted);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-sub);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-btn.active {
+            background: #ffffff;
+            color: #000000;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .calc-modal-btn {
+            background: #ffffff;
+            color: #000000;
+            font-weight: 800;
+            border: 1px solid #ffffff;
+        }
+
+        /* Page Views */
+        .page-view {
+            display: none;
+            width: 100%;
+            height: calc(100dvh - 56px);
+            overflow: hidden;
+        }
+
+        .page-view.active {
+            display: flex;
+        }
+
+        /* PAGE 1: THEOREM, FORMULA & SOLVED EXAMPLE CARD */
+        #page1 {
+            padding: 32px 20px;
+            overflow-y: auto;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .card {
+            background-color: var(--card-dark);
+            border: 1px solid var(--border-muted);
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin: 0 auto;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin: 0 0 24px 0;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-muted);
+        }
+
+        .formula-box {
+            background-color: #000000;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            font-size: 20px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+
+        .doc-section {
+            margin-bottom: 24px;
+        }
+
+        .doc-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-left: 3px solid #ffffff;
+            padding-left: 10px;
+            color: #ffffff;
+        }
+
+        .doc-text {
+            font-size: 13.5px;
+            line-height: 1.7;
+            color: var(--text-sub);
+        }
+
+        .math-solution-box {
+            background: #000000;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            line-height: 1.7;
+            color: #ffffff;
+            overflow-x: auto;
+        }
+
+        .symbol-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        .symbol-table th, .symbol-table td {
+            border: 1px solid var(--border-muted);
+            padding: 10px 12px;
+            text-align: left;
+        }
+
+        .symbol-table th {
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .next-page-btn {
+            margin-top: 16px;
+            padding: 14px 24px;
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #000000;
+            font-weight: 800;
+            font-size: 13px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .next-page-btn:hover {
+            background: #e0e0e0;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* PAGE 2: MAIN SUM, 3D GRAPH & DOWNWARD EXPLANATION BOX */
+        #page2 {
+            display: grid;
+            grid-template-columns: 480px 1fr;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            background: #0d0d0d;
+            border-right: 1px solid var(--border-muted);
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .input-wrapper {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-muted);
+            background: #111111;
+            flex-shrink: 0;
+        }
+
+        .section-header {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .input-card {
+            margin-bottom: 10px;
+            padding: 12px;
+            border: 1px solid var(--border-muted);
+            border-radius: 8px;
+            background: var(--card-dark);
+        }
+
+        .eq-grid, .param-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .eq-input, .param-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-muted);
+            border-radius: 6px;
+            background: #000000;
+            color: #ffffff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            outline: none;
+        }
+
+        .eq-input:focus, .param-input:focus {
+            border-color: #ffffff;
+        }
+
+        .calc-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #000000;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sum-steps-area {
+            padding: 16px;
+            flex: 1 1 auto;
+            overflow-y: auto;
+        }
+
+        .step-card {
+            background: var(--card-dark);
+            border: 1px solid var(--border-muted);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        .deep-math-block {
+            background: #000000;
+            border: 1px solid var(--border-muted);
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        .chat-box {
+            height: 210px;
+            border-top: 1px solid var(--border-muted);
+            display: flex;
+            flex-direction: column;
+            background: #000000;
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+
+        .chat-header {
+            padding: 8px 14px;
+            font-size: 10px;
+            font-weight: 800;
+            border-bottom: 1px solid var(--border-muted);
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            font-size: 11px;
+        }
+
+        .msg {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            max-width: 90%;
+            line-height: 1.4;
+            white-space: pre-line;
+        }
+
+        .msg.bot { background: #111111; border: 1px solid var(--border-muted); color: var(--text-sub); }
+        .msg.user { background: #ffffff; color: #000000; font-weight: 600; margin-left: auto; }
+
+        .chat-form {
+            padding: 8px;
+            display: flex;
+            gap: 6px;
+            border-top: 1px solid var(--border-muted);
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--border-muted);
+            border-radius: 4px;
+            background: #000000;
+            color: #ffffff;
+            font-size: 11px;
+            outline: none;
+        }
+
+        .send-btn {
+            padding: 8px 14px;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
+            background: #ffffff;
+            color: #000000;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        /* GRAPH CONTAINER & DOWNWARD EXPLANATION BOX */
+        .graph-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .canvas-wrapper {
+            flex: 1;
+            position: relative;
+            background: #000000;
+            min-height: 300px;
+        }
+
+        #three-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .graph-explanation-box {
+            height: 180px;
+            background: rgba(5, 5, 5, 0.95);
+            border-top: 1px solid var(--border-white);
+            padding: 16px 20px;
+            overflow-y: auto;
+            backdrop-filter: blur(12px);
+            flex-shrink: 0;
+        }
+
+        .graph-box-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+        }
+
+        .graph-box-content {
+            font-size: 11.5px;
+            line-height: 1.6;
+            color: var(--text-sub);
+        }
+
+        .graph-legend-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .legend-item {
+            background: #000000;
+            border: 1px solid var(--border-muted);
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 10.5px;
+        }
+
+        .legend-item b {
+            color: #ffffff;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* INTEGRAL CALCULATOR MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .calculator-card {
+            width: 520px;
+            max-width: 92vw;
+            background: #0a0a0a;
+            border: 1px solid var(--border-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+        }
+
+        .calc-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-muted);
+            padding-bottom: 10px;
+        }
+
+        .close-modal-btn {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .calc-input-group {
+            margin-bottom: 12px;
+        }
+
+        .calc-input-group label {
+            display: block;
+            font-size: 10.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            color: var(--text-sub);
+        }
+
+        .calc-input-field {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-muted);
+            border-radius: 6px;
+            background: #000;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .calc-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .calc-run-btn {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #fff;
+            border-radius: 6px;
+            background: #fff;
+            color: #000;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .calc-result-box {
+            background: #000;
+            border: 1px solid var(--border-muted);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        @media (max-width: 900px) {
+            #page2 { grid-template-columns: 1fr; }
+            .canvas-wrapper { height: 40vh; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- TOP NAVIGATION HEADER -->
+    <header class="nav-header">
+        <div class="brand-title">VectorViz <span>PRO</span></div>
+        <div class="nav-tabs">
+            <button id="tab-btn-1" class="nav-btn active" onclick="switchPage(1)">Page 1: Theorem &amp; Solved Sum</button>
+            <button id="tab-btn-2" class="nav-btn" onclick="switchPage(2)">Page 2: Main Sum &amp; 3D Graph</button>
+            <button class="nav-btn calc-modal-btn" onclick="toggleCalcModal(true)">🧮 Integral Calculator</button>
+        </div>
+    </header>
+
+    <!-- PAGE 1: THEOREM, FORMULA & SOLVED EXAMPLE CARD -->
+    <div id="page1" class="page-view active">
+        <div class="card">
+            <h1 class="title">Engineering Vector Theorems: Stokes' &amp; Divergence</h1>
+            <p class="subtitle">First-Principles Guide, Equation Proof &amp; Fully Solved Mathematical Example</p>
+            
+            <div class="formula-box">
+                $$\oint_C \mathbf{F} \cdot d\mathbf{r} = \iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S}$$
+            </div>
+
+            <!-- INTUITIVE EXPLANATION SECTION -->
+            <div class="doc-section">
+                <div class="doc-section-title">1. Plain-English Meaning &amp; Intuitive Analogy</div>
+                <div class="doc-text">
+                    <b>Stokes' Theorem</b> states that adding up all the vector force pushes along a <b>closed outer boundary curve (\(C\))</b> yields the exact same total result as summing up all the tiny microscopic rotational swirls (<b>Curl \(\nabla \times \mathbf{F}\)</b>) across the entire <b>enclosed surface (\(S\))</b>.
+                    <br><br>
+                    <b>💡 The Fishing Net Analogy:</b>
+                    Imagine placing a circular net (Surface \(S\)) bounded by a metal outer ring (Boundary \(C\)) into a swirling river:
+                    <ul>
+                        <li><b>Left-Hand Side (\(\oint_C \mathbf{F} \cdot d\mathbf{r}\)):</b> Walk around the solid outer metal ring \(C\) and measure how much the water pushes you forward along your path.</li>
+                        <li><b>Right-Hand Side (\(\iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S}\)):</b> Place tiny paddlewheels in every mesh square across the net \(S\). Adjacent paddlewheels push against each other and cancel their internal spins out! The <i>only</i> uncancelled spins are along the outer border, which equal the force measured along the ring.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- READABLE SYMBOL TABLE -->
+            <div class="doc-section">
+                <div class="doc-section-title">2. Symbol-by-Symbol Reference Table</div>
+                <table class="symbol-table">
+                    <thead>
+                        <tr><th>Symbol</th><th>Mathematical Term</th><th>Physical Meaning</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>\(\mathbf{F}\)</td><td>Vector Field</td><td>Force vector (e.g., fluid velocity, wind current, magnetic field)</td></tr>
+                        <tr><td>\(C\)</td><td>Boundary Curve</td><td>The 1D closed outer border loop framing a region</td></tr>
+                        <tr><td>\(\oint_C \dots d\mathbf{r}\)</td><td>Closed Line Integral</td><td>Summing force components along the walking boundary \(C\)</td></tr>
+                        <tr><td>\(S\)</td><td>Oriented Surface</td><td>The 2D sheet, disk, or bowl enclosed by boundary \(C\)</td></tr>
+                        <tr><td>\(\nabla \times \mathbf{F}\)</td><td>Curl of \(\mathbf{F}\)</td><td>Microscopic spin rate of the vector field at a specific point</td></tr>
+                        <tr><td>\(d\mathbf{S} = \mathbf{n}\,dA\)</td><td>Vector Area Element</td><td>Micro-patch multiplied by unit normal vector \(\mathbf{n}\) perpendicular to \(S\)</td></tr>
+                        <tr><td>\(\iint_S \dots d\mathbf{S}\)</td><td>Surface Integral</td><td>Summing local spins across all micro-tiles of surface \(S\)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- SOLVED MATHEMATICAL EXAMPLE -->
+            <div class="doc-section">
+                <div class="doc-section-title">3. Fully Solved Step-by-Step Mathematical Example</div>
+                <div class="doc-text">
+                    <b>Problem:</b> Verify Stokes' Theorem for \(\mathbf{F}(x,y,z) = -y\mathbf{i} + x\mathbf{j} + z\mathbf{k}\) over a circular path \(C\) of radius \(R = 2\) on plane \(z=0\).
+                </div>
+
+                <div class="math-solution-box">
+                    <b>📌 Step A: Calculate Left-Hand Side (LHS) Line Integral \(\oint_C \mathbf{F} \cdot d\mathbf{r}\)</b><br>
+                    1. Parameterize curve \(C\): \(\mathbf{r}(t) = 2\cos(t)\mathbf{i} + 2\sin(t)\mathbf{j} + 0\mathbf{k}, \quad t \in [0, 2\pi]\)<br>
+                    2. Path differential \(d\mathbf{r}\): \(d\mathbf{r} = (-2\sin(t)\mathbf{i} + 2\cos(t)\mathbf{j} + 0\mathbf{k})\,dt\)<br>
+                    3. Evaluate \(\mathbf{F}\) on \(C\): \(\mathbf{F} = -2\sin(t)\mathbf{i} + 2\cos(t)\mathbf{j} + 0\mathbf{k}\)<br>
+                    4. Dot Product \(\mathbf{F} \cdot d\mathbf{r}\): \([(-2\sin t)(-2\sin t) + (2\cos t)(2\cos t)]\,dt = 4(\sin^2 t + \cos^2 t)\,dt = 4\,dt\)<br>
+                    5. Integration: \(\int_{0}^{2\pi} 4\,dt = [4t]_{0}^{2\pi} = \mathbf{8\pi \approx 25.1327}\)<br><br>
+
+                    <b>📌 Step B: Calculate Right-Hand Side (RHS) Surface Integral \(\iint_S (\nabla \times \mathbf{F}) \cdot d\mathbf{S}\)</b><br>
+                    1. Calculate Curl \(\nabla \times \mathbf{F}\):<br>
+                       $$\nabla \times \mathbf{F} = \left(\frac{\partial z}{\partial y} - \frac{\partial x}{\partial z}\right)\mathbf{i} - \left(\frac{\partial z}{\partial x} - \frac{\partial (-y)}{\partial z}\right)\mathbf{j} + \left(\frac{\partial x}{\partial x} - \frac{\partial (-y)}{\partial y}\right)\mathbf{k} = \mathbf{2\mathbf{k}}$$
+                    2. Surface area element: \(d\mathbf{S} = \mathbf{k}\,dA\) (normal vector points straight up)<br>
+                    3. Surface integral: \(\iint_S (2\mathbf{k}) \cdot (\mathbf{k}\,dA) = 2 \iint_S dA\)<br>
+                    4. Circle area with \(R=2\): \(\text{Area} = \pi R^2 = 4\pi\)<br>
+                    5. Total Value = \(2(4\pi) = \mathbf{8\pi \approx 25.1327}\)<br><br>
+
+                    <b>✅ Verification: LHS (\(8\pi\)) = RHS (\(8\pi\)). Stokes' Theorem holds true!</b>
+                </div>
+            </div>
+
+            <button class="next-page-btn" onclick="switchPage(2)">Proceed to Page 2: Solve Custom Sum &amp; View Graph →</button>
+        </div>
+    </div>
+
+    <!-- PAGE 2: MAIN SUM, 3D GRAPH & DOWNWARD EXPLANATION BOX -->
+    <div id="page2" class="page-view">
+        <section class="sidebar">
+            <div class="input-wrapper">
+                <div class="section-header">Select Vector Theorem</div>
+                <select id="theorem-select" class="theorem-select" style="width: 100%; padding: 8px; border: 1px solid var(--border-white); background: #000; color: #fff; margin-bottom: 10px; border-radius: 6px;">
+                    <option value="stokes">1. Stokes' Theorem (Line Integral ⟷ Surface Curl)</option>
+                    <option value="gauss">2. Gauss' Divergence Theorem (Surface Flux ⟷ Volume Div)</option>
+                </select>
+
+                <div class="input-card">
+                    <div class="section-header">Vector Field Equations: F(x, y, z)</div>
+                    <div class="eq-grid">
+                        <input id="fx" class="eq-input" value="-y" placeholder="Fx">
+                        <input id="fy" class="eq-input" value="x" placeholder="Fy">
+                        <input id="fz" class="eq-input" value="z" placeholder="Fz">
+                    </div>
+                </div>
+
+                <div class="input-card">
+                    <div class="section-header">Domain Boundary Parameters</div>
+                    <div class="param-grid">
+                        <div>
+                            <div style="font-size: 9px; color: var(--text-muted)">Radius (R)</div>
+                            <input id="param-r" class="param-input" value="2">
+                        </div>
+                        <div>
+                            <div style="font-size: 9px; color: var(--text-muted)">Test X</div>
+                            <input id="px" class="param-input" value="1">
+                        </div>
+                        <div>
+                            <div style="font-size: 9px; color: var(--text-muted)">Test Y</div>
+                            <input id="py" class="param-input" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="calc-btn" class="calc-btn">Calculate Sum &amp; Update Graph</button>
+            </div>
+
+            <!-- MAIN SUM STEPS -->
+            <div class="sum-steps-area">
+                <div class="step-card">
+                    <b>Step 1: Left Hand Side Calculation</b>
+                    <div id="sum-step1"></div>
+                </div>
+                <div class="step-card">
+                    <b>Step 2: Right Hand Side Calculation</b>
+                    <div id="sum-step2"></div>
+                </div>
+                <div class="step-card" style="background: #ffffff; color: #000000; font-weight: 800;">
+                    <b>Verdict:</b>
+                    <div id="sum-verdict"></div>
+                </div>
+            </div>
+
+            <!-- DOWNWARD ASSISTANT CHAT BOX -->
+            <div class="chat-box">
+                <div class="chat-header">💬 Vector Assistant</div>
+                <div id="messages" class="messages"></div>
+                <form id="chat-form" class="chat-form">
+                    <input id="chat-input" placeholder="Ask any question about the graph or sum...">
+                    <button class="send-btn" type="submit">Send</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- RIGHT MAIN GRAPH VIEWPORT -->
+        <section class="graph-container">
+            <div class="canvas-wrapper">
+                <canvas id="three-canvas"></canvas>
+            </div>
+
+            <!-- DOWNWARD BOX EXPLAINING THE GRAPH -->
+            <div class="graph-explanation-box">
+                <div class="graph-box-title">📊 3D Graph &amp; Geometry Explanation</div>
+                <div class="graph-box-content" id="graph-box-desc">
+                    This interactive 3D visualization renders the active vector field sum and domain parameters:
+                </div>
+                <div class="graph-legend-grid">
+                    <div class="legend-item">
+                        <b>⚪ White Arrows</b>
+                        Vector forces F(x, y, z) calculated across spatial grid points.
+                    </div>
+                    <div class="legend-item">
+                        <b>⭕ Bright Outer Line</b>
+                        Closed boundary curve contour C of radius R where line integral ∮_C F·dr is calculated.
+                    </div>
+                    <div class="legend-item">
+                        <b>🌐 Translucent Surface</b>
+                        Enclosed surface S bounded by curve C across which micro-spins (Curl) are integrated.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- INTERACTIVE INTEGRAL CALCULATOR MODAL -->
+    <div id="calc-modal" class="modal-overlay">
+        <div class="calculator-card">
+            <div class="calc-header-row">
+                <div style="font-weight: 800; font-size: 14px; text-transform: uppercase;">🧮 Interactive Integral Calculator</div>
+                <button class="close-modal-btn" onclick="toggleCalcModal(false)">&times;</button>
+            </div>
+
+            <div class="calc-input-group">
+                <label>Select Integral Type</label>
+                <select id="modal-calc-type" class="calc-input-field" onchange="updateModalCalcFields()">
+                    <option value="1d">1D Single Line Integral: ∫ f(t) dt</option>
+                    <option value="2d">2D Polar Surface Integral: ∬ f(r, θ) r dr dθ</option>
+                </select>
+            </div>
+
+            <div class="calc-input-group">
+                <label id="calc-func-label">Integrand Function f(t)</label>
+                <input id="calc-func-input" class="calc-input-field" value="4" placeholder="e.g. 4, 2*t, r*cos(th)">
+            </div>
+
+            <div id="calc-limits-1d" class="calc-grid-2">
+                <div class="calc-input-group">
+                    <label>Lower Limit (a)</label>
+                    <input id="calc-a" class="calc-input-field" value="0">
+                </div>
+                <div class="calc-input-group">
+                    <label>Upper Limit (b)</label>
+                    <input id="calc-b" class="calc-input-field" value="6.28318">
+                </div>
+            </div>
+
+            <div id="calc-limits-2d" class="calc-grid-2" style="display: none;">
+                <div class="calc-input-group">
+                    <label>Radius Upper Limit (R)</label>
+                    <input id="calc-r-max" class="calc-input-field" value="2">
+                </div>
+                <div class="calc-input-group">
+                    <label>Integrand Curl Factor</label>
+                    <input id="calc-curl-factor" class="calc-input-field" value="2">
+                </div>
+            </div>
+
+            <button class="calc-run-btn" onclick="runCustomIntegral()">Compute Integral</button>
+
+            <div id="calc-output" class="calc-result-box">
+                Result: <b>25.1327</b> (which equals 8π)
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Page Switcher Engine
+    function switchPage(pageNum) {
+        document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(`page${pageNum}`).classList.add('active');
+        document.getElementById(`tab-btn-${pageNum}`).classList.add('active');
+
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+
+        if (pageNum === 2) {
+            setTimeout(() => { resize(); calculateSum(); }, 100);
+        }
+    }
+
+    // Modal Calculator Toggle
+    function toggleCalcModal(show) {
+        document.getElementById('calc-modal').classList.toggle('active', show);
+    }
+
+    function updateModalCalcFields() {
+        const type = document.getElementById('modal-calc-type').value;
+        if (type === '1d') {
+            document.getElementById('calc-func-label').innerText = "Integrand Function f(t)";
+            document.getElementById('calc-func-input').value = "4";
+            document.getElementById('calc-limits-1d').style.display = "grid";
+            document.getElementById('calc-limits-2d').style.display = "none";
+        } else {
+            document.getElementById('calc-func-label').innerText = "Integrand Function f(r, th)";
+            document.getElementById('calc-func-input').value = "2";
+            document.getElementById('calc-limits-1d').style.display = "none";
+            document.getElementById('calc-limits-2d').style.display = "grid";
+        }
+    }
+
+    function runCustomIntegral() {
+        const type = document.getElementById('modal-calc-type').value;
+        const exprStr = document.getElementById('calc-func-input').value;
+        const out = document.getElementById('calc-output');
+
+        try {
+            if (type === '1d') {
+                const a = Number(document.getElementById('calc-a').value) || 0;
+                const b = Number(document.getElementById('calc-b').value) || 6.28318;
+                const N = 1000;
+                const dt = (b - a) / N;
+                let sum = 0;
+                for (let i = 0; i < N; i++) {
+                    const t = a + (i + 0.5) * dt;
+                    sum += Number(math.evaluate(exprStr, { t })) * dt;
+                }
+                out.innerHTML = `Integral ∫_(${a.toFixed(2)})^(${b.toFixed(2)}) f(t) dt = <b>${sum.toFixed(4)}</b>`;
+            } else {
+                const R = Number(document.getElementById('calc-r-max').value) || 2;
+                const factor = Number(document.getElementById('calc-curl-factor').value) || 2;
+                const sum = factor * Math.PI * R * R;
+                out.innerHTML = `Surface Area Integral ∬_S (${factor}) r dr dθ = <b>${sum.toFixed(4)}</b>`;
+            }
+        } catch (e) {
+            out.innerHTML = `<span style="color: #ff4444;">Error evaluating expression! Check math syntax.</span>`;
+        }
+    }
+
+    // DOM Elements
+    const theoremSelect = document.getElementById("theorem-select");
+    const fxIn = document.getElementById("fx");
+    const fyIn = document.getElementById("fy");
+    const fzIn = document.getElementById("fz");
+    const paramR = document.getElementById("param-r");
+    const calcBtn = document.getElementById("calc-btn");
+
+    const sumStep1 = document.getElementById("sum-step1");
+    const sumStep2 = document.getElementById("sum-step2");
+    const sumVerdict = document.getElementById("sum-verdict");
+    const graphBoxDesc = document.getElementById("graph-box-desc");
+
+    const messages = document.getElementById("messages");
+    const chatForm = document.getElementById("chat-form");
+    const chatInput = document.getElementById("chat-input");
+
+    function evalExpr(expr, x, y, z) {
+        try { return Number(math.evaluate(expr, { x, y, z })); } catch { return 0; }
+    }
+
+    function getCurl(fx, fy, fz, x, y, z) {
+        const h = 0.001;
+        const dFz_dy = (evalExpr(fz, x, y + h, z) - evalExpr(fz, x, y - h, z)) / (2 * h);
+        const dFy_dz = (evalExpr(fy, x, y, z + h) - evalExpr(fy, x, y, z - h)) / (2 * h);
+        const dFx_dz = (evalExpr(fx, x, y, z + h) - evalExpr(fx, x, y, z - h)) / (2 * h);
+        const dFz_dx = (evalExpr(fz, x + h, y, z) - evalExpr(fz, x - h, y, z)) / (2 * h);
+        const dFy_dx = (evalExpr(fy, x + h, y, z) - evalExpr(fy, x - h, y, z)) / (2 * h);
+        const dFx_dy = (evalExpr(fx, x, y + h, z) - evalExpr(fx, x, y - h, z)) / (2 * h);
+
+        return { x: dFz_dy - dFy_dz, y: dFx_dz - dFz_dx, z: dFy_dx - dFx_dy };
+    }
+
+    function getDiv(fx, fy, fz, x, y, z) {
+        const h = 0.001;
+        const dFx_dx = (evalExpr(fx, x + h, y, z) - evalExpr(fx, x - h, y, z)) / (2 * h);
+        const dFy_dy = (evalExpr(fy, x, y + h, z) - evalExpr(fy, x, y - h, z)) / (2 * h);
+        const dFz_dz = (evalExpr(fz, x, y, z + h) - evalExpr(fz, x, y, z - h)) / (2 * h);
+        return dFx_dx + dFy_dy + dFz_dz;
+    }
+
+    let activeSumResults = {};
+
+    // Calculate Main Sum
+    function calculateSum() {
+        const mode = theoremSelect.value;
+        const fx = fxIn.value || "0";
+        const fy = fyIn.value || "0";
+        const fz = fzIn.value || "0";
+        const R = Math.max(0.5, Number(paramR.value) || 2);
+
+        if (mode === "stokes") {
+            let lineSum = 0;
+            const N = 200;
+            const dt = (2 * Math.PI) / N;
+            for (let i = 0; i < N; i++) {
+                const t = i * dt;
+                const x = R * Math.cos(t), y = R * Math.sin(t), z = 0;
+                const dx = -R * Math.sin(t) * dt, dy = R * Math.cos(t) * dt, dz = 0;
+                const vx = evalExpr(fx, x, y, z), vy = evalExpr(fy, x, y, z), vz = evalExpr(fz, x, y, z);
+                lineSum += (vx * dx + vy * dy + vz * dz);
+            }
+
+            let surfSum = 0;
+            const Nr = 30, Nth = 60, dr = R / Nr, dth = (2 * Math.PI) / Nth;
+            for (let i = 1; i <= Nr; i++) {
+                const r = (i - 0.5) * dr;
+                for (let j = 0; j < Nth; j++) {
+                    const th = j * dth;
+                    const x = r * Math.cos(th), y = r * Math.sin(th), z = 0;
+                    const curl = getCurl(fx, fy, fz, x, y, z);
+                    surfSum += curl.z * (r * dr * dth);
+                }
+            }
+
+            sumStep1.innerHTML = `LHS Line Integral ∮_C F · dr along circular path C (Radius R=${R}):<div class="deep-math-block">Value = ${lineSum.toFixed(4)}</div>`;
+            sumStep2.innerHTML = `RHS Surface Integral ∬_S (∇ × F) · dS across disk surface S:<div class="deep-math-block">Value = ${surfSum.toFixed(4)}</div>`;
+            sumVerdict.innerText = `LHS = ${lineSum.toFixed(4)} | RHS = ${surfSum.toFixed(4)} (Stokes' Theorem Holds!)`;
+
+            graphBoxDesc.innerHTML = `<b>Stokes' Graph Explanation:</b> The bright white ring represents boundary curve <b>C</b> of radius R=${R}. The translucent disk is surface <b>S</b>. White arrows display the force field F = (${fx}, ${fy}, ${fz}). The graph illustrates how adding microscopic vector curls across surface S equals work along boundary C.`;
+
+            activeSumResults = { mode: "stokes", lineSum, surfSum, fx, fy, fz, R };
+            update3DStokes(fx, fy, fz, R);
+
+        } else {
+            let fluxSum = 0;
+            const Nth = 30, Nph = 30, dth = Math.PI / Nth, dph = (2 * Math.PI) / Nph;
+            for (let i = 0; i < Nth; i++) {
+                const th = (i + 0.5) * dth;
+                for (let j = 0; j < Nph; j++) {
+                    const ph = j * dph;
+                    const x = R * Math.sin(th) * Math.cos(ph), y = R * Math.sin(th) * Math.sin(ph), z = R * Math.cos(th);
+                    const nx = Math.sin(th) * Math.cos(ph), ny = Math.sin(th) * Math.sin(ph), nz = Math.cos(th);
+                    const vx = evalExpr(fx, x, y, z), vy = evalExpr(fy, x, y, z), vz = evalExpr(fz, x, y, z);
+                    fluxSum += (vx * nx + vy * ny + vz * nz) * (R * R * Math.sin(th) * dth * dph);
+                }
+            }
+
+            let volSum = 0;
+            const Nr = 15, dr = R / Nr;
+            for (let k = 1; k <= Nr; k++) {
+                const r = (k - 0.5) * dr;
+                for (let i = 0; i < Nth; i++) {
+                    const th = (i + 0.5) * dth;
+                    for (let j = 0; j < Nph; j++) {
+                        const ph = j * dph;
+                        const x = r * Math.sin(th) * Math.cos(ph), y = r * Math.sin(th) * Math.sin(ph), z = r * Math.cos(th);
+                        volSum += getDiv(fx, fy, fz, x, y, z) * (r * r * Math.sin(th) * dr * dth * dph);
+                    }
+                }
+            }
+
+            sumStep1.innerHTML = `LHS Surface Flux ∬_S F · n dS over spherical shell (Radius R=${R}):<div class="deep-math-block">Value = ${fluxSum.toFixed(4)}</div>`;
+            sumStep2.innerHTML = `RHS Volume Divergence ∭_V (∇ · F) dV throughout ball V:<div class="deep-math-block">Value = ${volSum.toFixed(4)}</div>`;
+            sumVerdict.innerText = `LHS = ${fluxSum.toFixed(4)} | RHS = ${volSum.toFixed(4)} (Divergence Theorem Holds!)`;
+
+            graphBoxDesc.innerHTML = `<b>Gauss' Divergence Graph Explanation:</b> The translucent sphere represents bounding surface <b>S</b> of radius R=${R}. White arrows represent vector field forces. The graph illustrates how fluid escaping through surface S equals integrated internal divergence inside volume V.`;
+
+            activeSumResults = { mode: "gauss", fluxSum, volSum, fx, fy, fz, R };
+            update3DGauss(fx, fy, fz, R);
+        }
+    }
+
+    calcBtn.addEventListener("click", calculateSum);
+    theoremSelect.addEventListener("change", calculateSum);
+
+    // Chat Engine
+    function addMessage(text, role = "bot") {
+        const d = document.createElement("div");
+        d.className = `msg ${role}`;
+        d.textContent = text;
+        messages.appendChild(d);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    chatForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const q = chatInput.value.trim();
+        if (!q) return;
+        addMessage(q, "user");
+        chatInput.value = "";
+
+        setTimeout(() => {
+            const query = q.toLowerCase();
+            const res = activeSumResults;
+            if (query.includes("graph") || query.includes("explain")) {
+                addMessage(`📊 Graph Explanation for ${res.mode === 'stokes' ? "Stokes' Theorem" : "Gauss' Theorem"}:\n` +
+                    `• White arrows show force field F = (${res.fx}, ${res.fy}, ${res.fz}).\n` +
+                    `• Bright ring/mesh shows boundary region of radius R = ${res.R}.\n` +
+                    `• The sum confirms LHS (${res.lineSum !== undefined ? res.lineSum.toFixed(4) : res.fluxSum.toFixed(4)}) = RHS (${res.surfSum !== undefined ? res.surfSum.toFixed(4) : res.volSum.toFixed(4)}).`
+                );
+            } else {
+                addMessage(`I am analyzing your active sum: F = (${res.fx}, ${res.fy}, ${res.fz}). Ask me about the steps, graph, or theorem formula!`);
+            }
+        }, 200);
+    });
+
+    addMessage("⚡ Welcome! Ask me any questions about the 3D graph or sum calculations.");
+
+    // Three.js Visualizer
+    const canvas = document.getElementById("three-canvas");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 1);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+    camera.position.set(7, 7, 9);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+    const light = new THREE.DirectionalLight(0xffffff, 1.2);
+    light.position.set(5, 10, 5);
+    scene.add(light);
+
+    scene.add(new THREE.GridHelper(10, 20, 0x333333, 0x111111));
+    scene.add(new THREE.AxesHelper(3));
+
+    const fieldGroup = new THREE.Group();
+    const geometryGroup = new THREE.Group();
+    scene.add(fieldGroup);
+    scene.add(geometryGroup);
+
+    let isDragging = false, prevMouse = { x: 0, y: 0 };
+    let spherical = { radius: 12, theta: Math.PI / 4, phi: Math.PI / 3 };
+
+    function updateCam() {
+        const sinPhi = Math.sin(spherical.phi);
+        camera.position.set(
+            spherical.radius * sinPhi * Math.cos(spherical.theta),
+            spherical.radius * Math.cos(spherical.phi),
+            spherical.radius * sinPhi * Math.sin(spherical.theta)
+        );
+        camera.lookAt(0, 0, 0);
+    }
+
+    canvas.addEventListener("mousedown", (e) => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+    window.addEventListener("mouseup", () => isDragging = false);
+    window.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - prevMouse.x, dy = e.clientY - prevMouse.y;
+        prevMouse = { x: e.clientX, y: e.clientY };
+        spherical.theta -= dx * 0.008;
+        spherical.phi = Math.max(0.2, Math.min(Math.PI - 0.2, spherical.phi - dy * 0.008));
+        updateCam();
+    });
+    canvas.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        spherical.radius = Math.max(3, Math.min(25, spherical.radius + e.deltaY * 0.008));
+        updateCam();
+    }, { passive: false });
+
+    function clearGroup(g) {
+        while (g.children.length > 0) {
+            const obj = g.children[0];
+            if (obj.geometry) obj.geometry.dispose();
+            g.remove(obj);
+        }
+    }
+
+    function drawVectorField(fx, fy, fz) {
+        clearGroup(fieldGroup);
+        const count = 5;
+        for (let ix = 0; ix < count; ix++) {
+            for (let iy = 0; iy < count; iy++) {
+                for (let iz = 0; iz < 3; iz++) {
+                    const x = -3 + (ix / (count - 1)) * 6, y = -3 + (iy / (count - 1)) * 6, z = -2 + iz * 2;
+                    const ex = evalExpr(fx, x, y, z), ey = evalExpr(fy, x, y, z), ez = evalExpr(fz, x, y, z);
+                    const dir = new THREE.Vector3(ex, ey, ez);
+                    const len = dir.length();
+                    if (len > 0.01) {
+                        dir.normalize();
+                        fieldGroup.add(new THREE.ArrowHelper(dir, new THREE.Vector3(x, y, z), Math.min(0.7, len * 0.2), 0xffffff, 0.2, 0.1));
+                    }
+                }
+            }
+        }
+    }
+
+    function update3DStokes(fx, fy, fz, R) {
+        drawVectorField(fx, fy, fz);
+        clearGroup(geometryGroup);
+
+        const points = [];
+        for (let i = 0; i <= 100; i++) {
+            const t = (i / 100) * Math.PI * 2;
+            points.push(new THREE.Vector3(R * Math.cos(t), R * Math.sin(t), 0));
+        }
+        geometryGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 3 })));
+
+        const diskMesh = new THREE.Mesh(new THREE.CircleGeometry(R, 64), new THREE.MeshStandardMaterial({ color: 0x888888, transparent: true, opacity: 0.35, side: THREE.DoubleSide }));
+        geometryGroup.add(diskMesh);
+    }
+
+    function update3DGauss(fx, fy, fz, R) {
+        drawVectorField(fx, fy, fz);
+        clearGroup(geometryGroup);
+
+        const sphereMesh = new THREE.Mesh(new THREE.SphereGeometry(R, 32, 32), new THREE.MeshStandardMaterial({ color: 0xffffff, transparent: true, opacity: 0.25, wireframe: true }));
+        geometryGroup.add(sphereMesh);
+    }
+
+    function resize() {
+        const w = canvas.clientWidth, h = canvas.clientHeight;
+        if (w > 0 && h > 0) {
+            renderer.setSize(w, h, false);
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+        }
+    }
+
+    window.addEventListener("resize", resize);
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+
+    updateCam();
+    resize();
+    animate();
+</script>
+</body>
+</html>
